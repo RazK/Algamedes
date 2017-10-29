@@ -30,10 +30,9 @@ public class CyberShipBrain : SpaceshipBrain {
         }
     }
 
-    [SerializeField] private const float SafeDistance = 3f;
-    [SerializeField] private const float ShootingDistance = 6f;
-    [SerializeField] private const float ShieldUpTime = 10f;
-    [SerializeField] private const float MyShotLimit = 25f;
+    [SerializeField] private const float SafeDistance = 2f;
+    [SerializeField] private const float ShieldUpTime = 15f;
+    [SerializeField] private const float MyShotLimit = 30;
     private float _timer;
 
     private Action RaiseShield()
@@ -73,27 +72,13 @@ public class CyberShipBrain : SpaceshipBrain {
         // Find a tasty pray
         var nearestShip = FindNearsetShip();
         if (nearestShip == null) {
-            return DoNothing.action;
+            return TurnRight.action;
         }
         
         // Look for nearest opponent
         var toNearestVector = spaceship.ClosestRelativePosition(nearestShip);
-        var targetVector = toNearestVector;
+        var targetVector = toNearestVector + nearestShip.Forward;
         var angle = targetVector.GetAngle(forwardVector);
-        
-        // Opponent found! Hit or Run?
-        if (nearestShip.IsShieldUp)
-        {
-            // He's ready for us - better not mess with the dude!
-            if (angle >= 10f) 
-            {
-                return TurnRight.action;
-            } 
-            else if (angle <= -10f)
-            {
-                return TurnLeft.action;
-            }
-        }
         
         // Hit the motherfucker!
         if (toNearestVector.magnitude <= SafeDistance && !spaceship.IsShieldUp && spaceship.CanRaiseShield)
@@ -101,7 +86,7 @@ public class CyberShipBrain : SpaceshipBrain {
             return RaiseShield();
         } 
         // Shoot the bastard!
-        else if (!nearestShip.IsShieldUp && spaceship.CanShoot && toNearestVector.magnitude < ShootingDistance) 
+        else if (!nearestShip.IsShieldUp && spaceship.CanShoot) 
         {
             return Shoot.action;
         } 
@@ -117,7 +102,7 @@ public class CyberShipBrain : SpaceshipBrain {
         // Wonder around until something interesting happens
         else 
         {
-            return DoNothing.action;
+            return TurnLeft.action;
         }
     }
 
