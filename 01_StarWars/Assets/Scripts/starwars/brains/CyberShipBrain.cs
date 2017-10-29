@@ -1,11 +1,16 @@
 ﻿// Origianl: Aviad & Ori
 // Author: Raz 
+
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using StarWars.Actions;
 using Infra.Utils;
 using NUnit.Framework;
 using StarWars.UI;
+using UnityEditor;
+using UnityEngine.Windows.Speech;
+using Action = StarWars.Actions.Action;
 
 namespace StarWars.Brains {
 public class CyberShipBrain : SpaceshipBrain {
@@ -16,59 +21,104 @@ public class CyberShipBrain : SpaceshipBrain {
     }
     public override Color PrimaryColor {
         get {
-            return new Color((float)0xAA / 0xFF, (float)0xEE / 0xFF, (float)0xBB / 0xFF, 1f);
+            return new Color((float)0xFF, (float)0x00, (float)0x00, 0x11);
         }
     }
     public override SpaceshipBody.Type BodyType {
         get {
-            return SpaceshipBody.Type.XWing;
+            return SpaceshipBody.Type.TieFighter;
         }
     }
 
-    [SerializeField] float safeDistance = 3f;
-    [SerializeField] float shieldUpTime = 20f;
-    [SerializeField] float myShotLimit = 30f;
-    [SerializeField] bool danger;
-    private float timer;
+    [SerializeField] private const float SafeDistance = 3f;
+    [SerializeField] private const float ShootingDistance = 6f;
+    [SerializeField] private const float ShieldUpTime = 10f;
+    [SerializeField] private const float MyShotLimit = 25f;
+    private float _timer;
 
-    public override Action NextAction() {
-        danger = IsBeingShotAt();
-        if (danger) {
-            if (spaceship.CanRaiseShield) {
-                timer = shieldUpTime;
-                return ShieldUp.action;
-            } else if (spaceship.CanShoot) {
-                return Shoot.action;
-            } else {
+    private Action RaiseShield()
+    {
+        _timer = ShieldUpTime;
+        return ShieldUp.action;
+    }
+    
+    public override Action NextAction()
+    {
+        var forwardVector = spaceship.Forward;
+            
+        // Respond to threats
+        if (IsBeingShotAt()) {
+            // Raise shield if got enough energy
+            if (spaceship.CanRaiseShield)
+            {
+                return RaiseShield();
+            } 
+            // Otherwise RUN FOR YOUR LIFE!!!
+            else {
+                // Determine best direction for escape
+                var nearestShot = FindNearest(Space.Shots, IsNotMyShot);
+                var escapeAngle = nearestShot.Forward.GetAngle(forwardVector);
                 return TurnRight.action;
             }
         }
+        
+        // Relax shield if back to safety
         if (spaceship.IsShieldUp) {
-            --timer;
-            if (timer <= 0) {
+            --_timer;
+            if (_timer <= 0 && !IsBeingShotAt()) {
                 return ShieldDown.action;
             }
         }
+        
+        // Find a tasty pray
         var nearestShip = FindNearsetShip();
         if (nearestShip == null) {
             return DoNothing.action;
         }
-        var pos = spaceship.ClosestRelativePosition(nearestShip);
-        var forwardVector = spaceship.Forward;
-        var angle = pos.GetAngle(forwardVector);
-        if (angle >= 10f) {
-            return TurnLeft.action;
-        } else if (angle <= -10f) {
-            return TurnRight.action;
-        } else if (spaceship.CanShoot) {
-            return Shoot.action;
-        } else if (!spaceship.IsShieldUp && spaceship.CanRaiseShield && pos.magnitude <= safeDistance) {
-            timer = shieldUpTime;
-            return ShieldUp.action;
-        } else {
-            return TurnLeft.action;
+        
+        // Look for nearest opponent
+        var toNearestVector = spaceship.ClosestRelativePosition(nearestShip);
+        var targetVector = toNearestVector;
+        var angle = targetVector.GetAngle(forwardVector);
+        
+        // Opponent found! Hit or Run?
+        if (nearestShip.IsShieldUp)
+        {
+            // He's ready for us - better not mess with the dude!
+            if (angle >= 10f) 
+            {
+                return TurnRight.action;
+            } 
+            else if (angle <= -10f)
+            {
+                return TurnLeft.action;
+            }
         }
-
+        
+        // Hit the motherfucker!
+        if (toNearestVector.magnitude <= SafeDistance && !spaceship.IsShieldUp && spaceship.CanRaiseShield)
+        {
+            return RaiseShield();
+        } 
+        // Shoot the bastard!
+        else if (!nearestShip.IsShieldUp && spaceship.CanShoot && toNearestVector.magnitude < ShootingDistance) 
+        {
+            return Shoot.action;
+        } 
+        // Chase the coward!
+        else if (angle >= 10f) 
+        {
+            return TurnLeft.action;
+        } 
+        else if (angle <= -10f) 
+        {
+            return TurnRight.action;
+        } 
+        // Wonder around until something interesting happens
+        else 
+        {
+            return DoNothing.action;
+        }
     }
 
     private Spaceship FindNearsetShip() {
@@ -78,10 +128,11 @@ public class CyberShipBrain : SpaceshipBrain {
     private bool IsBeingShotAt() {
         var nearestShot = FindNearest(Space.Shots, IsNotMyShot);
         if (nearestShot != null) {
-            return spaceship.ClosestRelativePosition(nearestShot).magnitude <= safeDistance;
+            return spaceship.ClosestRelativePosition(nearestShot).magnitude <= SafeDistance;
         }
         return false;
     }
+
 
     private T FindNearest<T>(IList<T> list, System.Func<T ,bool> predicate = null) where T : SpaceObject {
         T nearest = null;
@@ -101,7 +152,7 @@ public class CyberShipBrain : SpaceshipBrain {
 
     private bool IsNotMyShot(Shot shot) {
         var angleToShot = shot.Forward.GetAngle(spaceship.Forward);
-        return -myShotLimit > angleToShot || angleToShot > myShotLimit;
+        return -MyShotLimit > angleToShot || angleToShot > MyShotLimit;
     }
 
     private bool IsNotMe(Spaceship ship) {
