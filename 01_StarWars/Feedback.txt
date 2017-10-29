@@ -1,0 +1,23 @@
+General Grade Distribution:
++15 - Code is compiling
++15 - Compiling & not raising exceptions/errors
++10 - Compiling & no logical errors & bugs
++5 - Compiling & no warnings
++5 - Consistent coding conventions & readability
+
+Exercise Specific:
++10 - README (student details and description of your strategies)
++40 - Spaceship(s) (strategy and implementation)
+
+Key Points to Notice:
+# Don't forget to describe the strategy of each ship in the README.
+# After you've got something working and you're happy with it - clean it up and remove unused or duplicated code.
+# Document WHAT your code is trying to do, not HOW (unless the HOW is complicated to understand from reading the code).
+# Try to match the coding conventions of the code you're working with (for example, use PascalCase and not camelCase for method names) but most importantly, be consistent with your conventions.
+
+Tips:
+# The ship doesn't have to react only to the current situation. Try to have it "remember" it's plan or chosen strategy.
+# Use your shield smartly! it can be crucial to your success.
+# Don't assume both of your ships will exist in the same battle (but you can take advantage of the chance if they do...)
+# Run a match with just one of your ships and the "Player" ship to test your ship's performance.
+# There are some hidden achievements that can grant you bonuses, so - think big!
