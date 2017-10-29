@@ -59,3 +59,6 @@ GoogleAarExplodeCache.xml
 # File merge
 *.orig
 *.orig.meta
+# Rider
+*.idea
+.idea/
