@@ -1,14 +1,17 @@
-﻿// Author: Aviad & Ori
+﻿// Origianl: Aviad & Ori
+// Author: Raz 
 using UnityEngine;
 using System.Collections.Generic;
 using StarWars.Actions;
 using Infra.Utils;
+using NUnit.Framework;
+using StarWars.UI;
 
 namespace StarWars.Brains {
-public class MyDarthShipBrain : SpaceshipBrain {
+public class CyberShipBrain : SpaceshipBrain {
     public override string DefaultName {
         get {
-            return "DarthShip";
+            return "CyberShip";
         }
     }
     public override Color PrimaryColor {
