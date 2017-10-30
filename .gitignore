@@ -59,9 +59,24 @@ GoogleAarExplodeCache.xml
 # File merge
 *.orig
 *.orig.meta
+<<<<<<< HEAD
 01_StarWars/Assets/Plugins/Editor/JetBrains/Unity3DRider.cs
 01_StarWars/.idea/.idea.01_StarWars/.idea/indexLayout.xml
 01_StarWars/.idea/.idea.01_StarWars/riderModule.iml
 01_StarWars/.idea/.idea.01_StarWars/.idea/contentModel.xml
 01_StarWars/.idea/.idea.01_StarWars/.idea/modules.xml
 01_StarWars/.idea/.idea.01_StarWars/.idea/workspace.xml
+=======
+01_StarWars/.idea/.idea.01_StarWars/.idea/contentModel.xml
+01_StarWars/.idea/.idea.01_StarWars/.idea/contentModel.xml
+01_StarWars/.idea/.idea.01_StarWars/.idea/workspace.xml
+01_StarWars/.idea/.idea.01_StarWars/.idea/contentModel.xml
+01_StarWars/.idea/.idea.01_StarWars/.idea/contentModel.xml
+01_StarWars/Assets/Plugins/Editor/JetBrains/Unity3DRider.cs
+01_StarWars/.idea/.idea.01_StarWars/riderModule.iml
+01_StarWars/.idea/.idea.01_StarWars/.idea/modules.xml
+01_StarWars/.idea/.idea.01_StarWars/.idea/indexLayout.xml
+01_StarWars/Assets/Plugins/Editor/JetBrains.meta
+01_StarWars/Assets/Plugins/Editor/JetBrains/Unity3DRider.cs.meta
+01_StarWars/Assets/Prefabs/ExplosionEffect.prefab
+>>>>>>> b28e3436ba2a6bbaa1eb8a85edc0b2705530a133
