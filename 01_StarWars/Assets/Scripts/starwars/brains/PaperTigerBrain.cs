@@ -66,7 +66,12 @@ public class PaperTigerBrain : SpaceshipBrain {
             timeToRun = true;
             _runningFor = 0;
         }
-        
+
+        // in case of collisions at least both ships will be killed
+        if (fromNearestVector.magnitude <= SafeDistance && spaceship.CanRaiseShield) {
+            return RaiseShield();
+        }
+
         // If the nearest ship faces the PaperTiger - it runs away
         if (Math.Abs(nearestAngleToMe) <= 20)
         {
