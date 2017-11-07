@@ -1,5 +1,5 @@
-﻿// Origianl: Aviad & Ori
-// Author: Raz 
+﻿// Original: Aviad & Ori
+// Authors: Raz & Gal 
 
 using System;
 using UnityEngine;
